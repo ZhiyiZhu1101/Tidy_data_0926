@@ -19,13 +19,33 @@ pulse_df =
     names_to = "visit",
     values_to = "bdi_score",
     names_prefix = "bdi_score_"
-  )|>
+    )|>
   mutate(
     visit = replace(visit, visit == "bl", "00m")
   )
 ```
 
+Import/ lengthen the litters dataset
 
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv") |>
+  janitor::clean_names() |>
+  select(litter_number, gd0_weight:gd18_weight) |>
+  pivot_longer(
+    gd0_weight:gd18_weight,
+    names_to = "gd",
+    values_to = "weight",
+    names_prefix = "gd") |>
+  mutate(
+    gd = case_match(
+      gd,
+      "0_weight"~ 0,
+      "18_weight"~18,
+    )
+  )
+  
+```
 
 
 
